@@ -1,20 +1,39 @@
 import { con } from "./db.js";
-
-const userAdd=(data)=>{
-userData.push(data)
+import mongoose from "mongoose";
+const { Schema } = mongoose;
+const schema = new Schema({
+    customerName:String,
+    customerId:Number,
+    customerAddress:String,
+    customerEmail:String
+});
+const Model = mongoose.model('Test', schema);
+const userAdd=async(data)=>{
+    try{
+        const userIsExist=await Model.find({ customerName: data[0].customerName}).exec();
+       if(userIsExist.length>0){
+        return 'user already exist'
+       }
+       else{
+      await Model.insertMany(data)
+        return 'user added success fully'
+       }
+    }catch(error){
+        return error
+    }
 }
-const customersData=async ()=>{
-    // Inside the try block of the connectToMongoDB function
+const customersData=async()=>{
+    try{
+        const data=await Model.find().exec()
 
-const database = con.db('CustomerDB'); // Replace 'test' with your database name
-const collection = database.collection('CustomersPurchase'); // Replace 'mycollection' with your collection name
-
-// Insert a document into the collection
-const result = await collection.insertOne({ name: 'John Doe', age: 30 });
-console.log(`Inserted document with _id: ${result.insertedId}`);
-
-    let userData=[{id:1,name:'kk'}]
-    return userData
+        console.log('data====>',data)
+        return data
+    }catch(error){
+        console.log('erro ===>',error)
+        return error
+      
+    }
+   
 }
 
 export {userAdd,customersData}
